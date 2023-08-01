@@ -20,6 +20,7 @@ return new class extends Migration
             $table->tinyInteger('limite');
             $table->dateTime('fechainicio');
             $table->integer('instalacionescentro')->index('fk_instalacionescentrotorneo_idx');
+            $table->boolean('eliminado')->default(false);
         });
     }
 

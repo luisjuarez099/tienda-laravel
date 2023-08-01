@@ -73,7 +73,7 @@ cte_inst AS (
 # fetch instalaciones centro
 cte_cen_inst AS (
     SELECT 
-        ic.idInstalacionesCentro AS ID,
+        ic.idinstalacionescentro AS ID,
         cen.CENTRO, 
         ins.INSTALACION,
         cen.CALLE, 
@@ -97,6 +97,7 @@ cte_torneos AS (
         t.limite AS CUPO,
         t.fechainicio AS INICIO,
         ci.CENTRO,
+        ci.INSTALACION,
         ci.CALLE,
         ci.NUMERO_EXT, 
         ci.COLONIA, 
@@ -111,7 +112,7 @@ cte_torneos AS (
 
 # fetch inscritos torneo
 SELECT
-    it.idInscritosTorneo AS ID,
+    it.idinscritostorneo AS ID,
     s.NOMBRES,
     s.AP_PATERNO,
     s.AP_MATERNO,
@@ -123,10 +124,12 @@ SELECT
     t.DEPORTE, 
     t.CUPO, 
     DATE_FORMAT(t.INICIO, '%d-%m-%Y %H:%i') AS INICIO,
-    t.CENTRO
+    t.CENTRO,
+    t.INSTALACION
 FROM inscritostorneo AS it
 INNER JOIN cte_socios AS s ON it.socio=s.ID
-INNER JOIN cte_torneos AS t ON it.torneo=t.ID;
+INNER JOIN cte_torneos AS t ON it.torneo=t.ID
+WHERE t.INICIO > CURDATE() AND it.eliminado IS FALSE;
 
 END");
     }

@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('instalaciones', function (Blueprint $table) {
             $table->integer('idinstalaciones', true);
             $table->string('nombre', 45);
+            $table->boolean('eliminado')->default(false);
         });
     }
 

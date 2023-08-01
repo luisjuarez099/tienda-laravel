@@ -20,6 +20,7 @@ return new class extends Migration
             $table->boolean('estatuspago');
             $table->string('nombreequipo', 45);
             $table->integer('torneo')->index('fk_torneoinscripcion_idx');
+            $table->boolean('eliminado')->default(false);
         });
     }
 

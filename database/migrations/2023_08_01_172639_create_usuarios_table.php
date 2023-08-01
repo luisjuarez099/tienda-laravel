@@ -13,10 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('instalacionescentro', function (Blueprint $table) {
-            $table->integer('idinstalacionescentro', true);
-            $table->integer('instalacion')->index('fk_instalacioncentro_idx');
-            $table->integer('centro')->index('fk_centroinstalacion_idx');
+        Schema::create('usuarios', function (Blueprint $table) {
+            $table->integer('id', true);
+            $table->string('usuarios');
+            $table->string('password');
+            $table->boolean('status')->nullable();
+            $table->dateTime('created_at')->nullable();
+            $table->dateTime('updated_at')->nullable();
         });
     }
 
@@ -27,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('instalacionescentro');
+        Schema::dropIfExists('usuarios');
     }
 };

@@ -17,4 +17,7 @@
     <li class="nav-item">
       <a class="nav-link" href="{{ route('tipoproducto.index') }}" >Tipo Productos</a>
     </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#" >Login</a>
+    </li>
 </ul>

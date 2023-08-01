@@ -72,11 +72,11 @@ SELECT
     t.idtorneo AS ID,
     t.nombre AS NOMBRE,
     d.nombre AS DEPORTE,
+    DATE_FORMAT(t.fechainicio, '%d-%b-%Y %H:%i') AS INICIO,
     t.limite AS CUPO,
-    #TODO: return disponibles
-    count_torneo_inscritos(t.nombre, t.deporte, t.fechainicio, ci.CENTRO) AS INSCRITOS,
-    DATE_FORMAT(t.fechainicio, '%d-%m-%Y %H:%i') AS INICIO,
+    count_torneo_inscritos(t.nombre, d.nombre, t.fechainicio, ci.CENTRO, ci.INSTALACION) AS INSCRITOS,
     ci.CENTRO,
+    ci.INSTALACION,
     ci.CALLE,
     ci.NUMERO_EXT, 
     ci.COLONIA, 
@@ -87,7 +87,7 @@ SELECT
 FROM torneo AS t
 INNER JOIN deportes AS d ON t.deporte=d.iddeportes
 INNER JOIN cte_cen_inst AS ci ON t.instalacionescentro=ci.ID
-WHERE t.fechainicio >= CURDATE();
+WHERE t.fechainicio >= CURDATE() AND t.eliminado IS FALSE;
 END");
     }
 

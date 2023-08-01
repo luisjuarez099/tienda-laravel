@@ -23,19 +23,18 @@ BEGIN
         cp.cp AS CODIGO_POSTAL,
         mun.nombre AS MUNICIPIO,
         est.estado AS ESTADO,
-        est.pais AS PAIS
+        pai.nombre AS PAIS
     FROM centro AS cen
-    INNER JOIN colonia AS col ON cen.idcentro=col.idcolonia
+    INNER JOIN colonia AS col ON cen.colonia=col.idcolonia
     INNER JOIN codigopostal AS cp ON cen.cp=cp.idcodigopostal
     INNER JOIN municipios AS mun ON cen.municipo=mun.idmunicipios
+    INNER JOIN paises AS pai ON cen.pais=pai.idpaises
     INNER JOIN (
         SELECT 
-            e.idEstados,
-            e.nombre AS estado,
-            pai.nombre AS pais
+            e.idestados,
+            e.nombre AS estado
         FROM estados AS e
-        INNER JOIN paises AS pai ON e.idpais=pai.idPaises
-    ) AS est ON cen.estado=est.idEstados;
+    ) AS est ON cen.estado=est.idestados;
 END");
     }
 

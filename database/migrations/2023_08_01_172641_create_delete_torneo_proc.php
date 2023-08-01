@@ -13,13 +13,18 @@ return new class extends Migration
     public function up()
     {
         DB::unprepared("CREATE DEFINER=`equipo1`@`%` PROCEDURE `delete_torneo`(
-    IN NOMBRE VARCHAR(50),
-    IN FECHA_INICIO DATETIME
+    IN TORNEO_ID INT
 )
 BEGIN
     UPDATE torneo AS t
-    SET t.fechainicio = '1500-01-01 00-00-00'
-    WHERE t.nombre = NOMBRE AND t.fechainicio = FECHA_INICIO;
+    SET t.eliminado = TRUE
+    WHERE t.idtorneo = TORNEO_ID;
+
+    IF ROW_COUNT() > 0 THEN
+        SELECT 'Success' AS RESULT;
+    ELSE
+        SELECT 'Failed' AS RESULT;
+    END IF;
 END");
     }
 

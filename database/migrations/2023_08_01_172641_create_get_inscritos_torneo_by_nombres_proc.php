@@ -12,7 +12,7 @@ return new class extends Migration
      */
     public function up()
     {
-        DB::unprepared("CREATE DEFINER=`equipo1`@`%` PROCEDURE `get_inscritos_torneo_by_apellidos`(IN apellidoP VARCHAR(50), IN apellidoM VARCHAR(45))
+        DB::unprepared("CREATE DEFINER=`equipo1`@`%` PROCEDURE `get_inscritos_torneo_by_nombres`(IN nombres VARCHAR(65))
 BEGIN
 
 # fetch socios
@@ -34,7 +34,7 @@ WITH cte_socios AS (
     INNER JOIN codigopostal AS cp ON s.cp=cp.idcodigopostal
     INNER JOIN municipios AS m ON s.municipio=m.idMunicipios
     INNER JOIN estados AS e ON s.estado=e.idEstados
-    WHERE s.apellidop=apellidoP AND s.apellidom=apellidoM
+    WHERE s.nombres=nombres
 ),
 
 # fetch centro
@@ -98,6 +98,7 @@ cte_torneos AS (
         t.limite AS CUPO,
         t.fechainicio AS INICIO,
         ci.CENTRO,
+        ci.INSTALACION,
         ci.CALLE,
         ci.NUMERO_EXT, 
         ci.COLONIA, 
@@ -124,10 +125,12 @@ SELECT
     t.DEPORTE, 
     t.CUPO, 
     DATE_FORMAT(t.INICIO, '%d-%m-%Y %H:%i') AS INICIO,
-    t.CENTRO
+    t.CENTRO,
+    t.INSTALACION
 FROM inscritostorneo AS it
 INNER JOIN cte_socios AS s ON it.socio=s.ID
-INNER JOIN cte_torneos AS t ON it.torneo=t.ID;
+INNER JOIN cte_torneos AS t ON it.torneo=t.ID
+WHERE t.INICIO > CURDATE() AND it.eliminado IS FALSE;
 
 END");
     }
@@ -139,6 +142,6 @@ END");
      */
     public function down()
     {
-        DB::unprepared("DROP PROCEDURE IF EXISTS get_inscritos_torneo_by_apellidos");
+        DB::unprepared("DROP PROCEDURE IF EXISTS get_inscritos_torneo_by_nombres");
     }
 };

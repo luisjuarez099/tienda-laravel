@@ -24,6 +24,7 @@ return new class extends Migration
             $table->integer('municipo')->index('fk_centmun_idx');
             $table->integer('estado')->index('fk_centest_idx');
             $table->integer('pais')->index('fk_centpai_idx');
+            $table->boolean('eliminado')->default(false);
         });
     }
 

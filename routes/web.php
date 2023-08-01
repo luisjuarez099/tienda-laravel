@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UsuarioController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\ProveedorController;
@@ -8,8 +8,13 @@ use App\Http\Controllers\StocktiendaController;
 use App\Http\Controllers\TiendacentroController;
 use App\Http\Controllers\TipoproductoController;
 
-
-
+//ruta para usuarios
+Route::get('/', [UsuarioController::class,'home'])->name('home');
+Route::get('/login',[UsuarioController::class,'login'])->name('login');
+Route::post('/login',[UsuarioController::class,'loginPost'])->name('login.post');
+Route::get('/registrar', [UsuarioController::class, 'registro'])->name('registrar');
+Route::post('/registrar', [UsuarioController::class, 'registroPost'])->name('registrar.post');
+Route::get('/logout', [UsuarioController::class, 'logout'])->name('logout');
 //metodos CRUD para cata una de la tablas
 Route::get('/', [CatalogoController::class,'home'])->name('home');
 Route::resource('catalogo',CatalogoController::class);
@@ -46,15 +51,3 @@ Route::get('trashedS',[StocktiendaController::class, 'trashedS'])->name('stock.t
 Route::get('restore-allS',[StocktiendaController::class, 'restoreallS']);
 
 
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
-
-require __DIR__.'/auth.php';

@@ -13,36 +13,34 @@ return new class extends Migration
     public function up()
     {
         DB::unprepared("CREATE DEFINER=`equipo1`@`%` PROCEDURE `create_new_torneo`(
-    IN NOMBRE VARCHAR(45),
+    IN TORNEO VARCHAR(45),
     IN DEPORTE VARCHAR(45),
     IN LIMITE TINYINT,
     IN INICIO DATETIME,
-    IN INS_CENTRO VARCHAR(45)
+    IN CENTRO VARCHAR(45),
+    IN INSTALACION VARCHAR(45)
     )
 BEGIN
 
-DECLARE centro_id INT;
+DECLARE inst_cen_id INT;
 DECLARE deporte_id INT;
-DECLARE torneo_count INT;
+DECLARE already_created INT;
 
-# fetch centro id
-SELECT find_centro_id(INS_CENTRO) INTO centro_id;
+# fetch instalacion centro id
+SELECT find_inst_centro_id(CENTRO, INSTALACION) INTO inst_cen_id;
 
 # fetch deporte id
 SELECT find_deporte_id(DEPORTE) INTO deporte_id;
 
-SELECT COUNT(*) INTO torneo_count 
-FROM torneo AS t
-WHERE t.nombre=NOMBRE
-    AND t.fechainicio=INICIO
-    AND t.deporte=deporte_id
-    AND t.instalacionescentro=centro_id;
+SELECT is_torneo_already_created(TORNEO, DEPORTE, INICIO, CENTRO, INSTALACION) INTO already_created;
 
-IF torneo_count > 0 THEN
-    SELECT 'El torneo que se intenta ingresar ya esta registrado';
+IF already_created > 0 THEN
+    SELECT 'Success' AS RESULT;
 ELSE
     INSERT INTO torneo (nombre, deporte, limite, fechainicio, instalacionescentro)
-    VALUES(NOMBRE, deporte_id, LIMITE, INICIO, centro_id);
+    VALUES(TORNEO, deporte_id, LIMITE, INICIO, inst_cen_id);
+
+    SELECT 'Failed' AS RESULT;
 END IF;
 END");
     }

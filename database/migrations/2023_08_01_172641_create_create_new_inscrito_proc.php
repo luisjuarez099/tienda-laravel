@@ -15,8 +15,11 @@ return new class extends Migration
         DB::unprepared("CREATE DEFINER=`equipo1`@`%` PROCEDURE `create_new_inscrito`(
     IN SOCIO INT,
     IN TORNEO VARCHAR(50),
+    IN DEPORTE VARCHAR(50),
     IN INICIO DATETIME,
-    IN NOMBRE_EQUIPO VARCHAR(45),
+    IN CENTRO VARCHAR(50),
+    IN INSTALACION VARCHAR(45),
+    IN EQUIPO VARCHAR(45),
     IN CUOTA DOUBLE,
     IN ESTATUS_PAGO TINYINT
 )
@@ -26,24 +29,30 @@ BEGIN
     DECLARE torneo_id INT;
     DECLARE torneo_cupo INT;
     DECLARE torneo_count INT;
+    DECLARE already_inscrito INT;
 
-    SELECT t.idtorneo, t.limite INTO torneo_id, torneo_cupo
-    FROM torneo AS t
-    WHERE t.nombre = TORNEO AND t.fechainicio = INICIO;
+    -- Find torneo id
+    SELECT find_torneo_id(TORNEO, DEPORTE, INICIO, CENTRO, INSTALACION) INTO torneo_id;
 
     -- Count rows for torneo with fechainicio
-    SELECT COUNT(*) INTO torneo_count
-    FROM inscritostorneo AS it
-    WHERE it.torneo = torneo_id;
+    SELECT count_torneo_inscritos(TORNEO, DEPORTE, INICIO, CENTRO, INSTALACION) INTO torneo_count;
 
-    -- If it's higher than cupo then return
+    -- validar que el socio no este inscrito ya en el torneo
+    SELECT is_socio_already_inscrito_in_torneo(SOCIO, TORNEO, DEPORTE, INICIO, CENTRO, INSTALACION) 
+    INTO already_inscrito;
+
+    -- If inscritos in torneo is higher than cupo then return
     IF torneo_count > torneo_cupo THEN
-        SELECT 'Cupo lleno, No se puede inscribir al torneo';
-    ELSE
+        SELECT 'Failed' AS RESULT;
+    END IF;
 
+    IF already_inscrito > 0 THEN
+        SELECT 'Failed' AS RESULT;
+    ELSE
         -- Insert into inscritostorneo table
         INSERT INTO inscritostorneo (socio, cuota, estatuspago, nombreequipo, torneo)
-        VALUES (SOCIO, CUOTA, ESTATUS_PAGO, NOMBRE_EQUIPO, torneo_id);
+        VALUES (SOCIO, CUOTA, ESTATUS_PAGO, EQUIPO, torneo_id);
+        SELECT 'Success' AS RESULT;
     END IF;
 END");
     }

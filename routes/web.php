@@ -1,22 +1,14 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\StocktiendaController;
 use App\Http\Controllers\TiendacentroController;
 use App\Http\Controllers\TipoproductoController;
-use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
+
 
 //metodos CRUD para cata una de la tablas
 Route::get('/', [CatalogoController::class,'home'])->name('home');
@@ -52,3 +44,17 @@ Route::get('restore-allTP',[TipoproductoController::class,'restoreallTP']);
 Route::get('stock/{stock}', [StocktiendaController::class, 'restoreS'])->name('stock.restore');
 Route::get('trashedS',[StocktiendaController::class, 'trashedS'])->name('stock.trashed');
 Route::get('restore-allS',[StocktiendaController::class, 'restoreallS']);
+
+
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+require __DIR__.'/auth.php';
